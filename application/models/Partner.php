@@ -32,4 +32,10 @@ class PartnerModel{
         else
             return empty($partners[$no]) ? array() : $partners[$no];
     }
+
+    public function setPartners($no, $config){
+        if(!empty($no) && $this->redis)
+            return $this->redis->hset("page_partners" , $no, json_encode($config));
+        else return false;
+    }
 }

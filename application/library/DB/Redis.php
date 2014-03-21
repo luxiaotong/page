@@ -105,5 +105,4 @@ class DB_Redis{
             return call_user_func_array(array($link, $method), $params);
         }else return false;
     }
-    
 }

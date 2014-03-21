@@ -1,0 +1,23 @@
+<?php
+/**
+ * 这个文件是用来输出通用的信息，整个只包涵一个输出框，用于输出一段文本
+ * 这个输出框的颜色根据msg_level来确认，有4个等级0,1,2,3,等级越高表示越严重(红色)
+ * 另外一个变量是msg，是输出的文本
+ */
+?>
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
+<?php
+    $class_map = array("success", "info", "warning", "danger");
+    if(empty($class_map[$msg_level])){
+        $class = "success";
+    }else
+        $class = $class_map[$msg_level];
+?>
+
+<?php if($msg){ ?>
+<div class="alert alert-<?= $class ?>">
+<?= $msg ?>
+</div>
+<?php } ?>
+
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>
