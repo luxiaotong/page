@@ -39,7 +39,7 @@ class Tool_Log{
         //有些服务器的权限有问题
         $oldmask = umask(0);
         self::makeDir(dirname($file));
-        
+
         $fp = fopen($file, "ab");
         if($fp){
             fwrite($fp, $line);
@@ -53,7 +53,7 @@ class Tool_Log{
     }
 
     //创建目录函数
-    public static function makeDir($dir){    
+    public static function makeDir($dir){
         if(empty($dir)) return false;
         if(file_exists($dir))  return true;
 
@@ -61,5 +61,5 @@ class Tool_Log{
         $return = mkdir($dir, 0755, true);
         umask($oldmask);
         return $return;
-    }                      
+    }
 }

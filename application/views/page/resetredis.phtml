@@ -1,0 +1,19 @@
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
+
+<?php if($error){ ?>
+<div class="alert alert-danger">
+<?php echo $error; ?>
+</div>
+<?php } ?>
+<div class="alert alert-success">
+    我们会在根据你提供的common.php文件生成page的配置文件，请在下面的输入框输入common.php的文件地址
+</div>
+<form role="form" method="post">
+    <div class="form-group">
+        <label>common.php文件的路径(默认标准地址)</label>
+        <input type="text" name="v4root" class="form-control" placeholder="/data1/sinawap/code/weibov4_wap/data/product/page/common.php">
+    </div>
+    <button type="submit" class="btn btn-primary" name="submit" value="notempty">生成</button>
+</form>
+
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>
