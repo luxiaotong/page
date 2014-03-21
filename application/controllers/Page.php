@@ -4,11 +4,19 @@ class PageController extends Yaf_Controller_Abstract{
     //默认的common.php文件目录
     private static $defaultFilePath = "/data1/sinawap/code/weibov4_wap/data/product/page/common.php";
 
+    public function init(){
+        $assignParams = array(
+          //  "controllerName" => "page",
+        );
+        $this->getView()->assign($assignParams);
+    }
+
     public function indexAction(){
+        $assignParams = array(
+            "title" => "Page合作方配置",
+        );
         //用来在模板里判断高亮显示哪个栏
-        $this->getView()->assign("page_type", "page_partner");
-
-
+        $this->getView()->assign($assignParams);
     }
 
     /**
