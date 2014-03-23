@@ -6,18 +6,5 @@
  */
 ?>
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
-<?php
-    $class_map = array("success", "info", "warning", "danger");
-    if(empty($class_map[$msg_level])){
-        $class = "success";
-    }else
-        $class = $class_map[$msg_level];
-?>
-
-<?php if($msg){ ?>
-<div class="alert alert-<?= $class ?>">
-<?= $msg ?>
-</div>
-<?php } ?>
-
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/box.phtml'); ?>
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>

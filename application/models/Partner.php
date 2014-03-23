@@ -2,6 +2,7 @@
 class PartnerModel{
 
     private $redis;
+    private $partners;
 
     public function __construct(){
         $this->_getRedis();
@@ -19,23 +20,30 @@ class PartnerModel{
      * @params string $no   获取指定业务码的配置，如果为空表示获取所有的配置
      */
     public function getPartners($no = ''){
-        static $partners = array();
-        if(empty($partners) && $this->redis){
+        if(empty($this->partners) && $this->redis){
             $raw = $this->redis->hgetall("page_partners");
             foreach((array)$raw as $key => $val){
                 if(!empty($val))
-                    $partners[$key] = json_decode($val, true);
+                    $this->partners[$key] = json_decode($val, true);
             }
         }
         if(empty($no))
-            return $partners;
+            return $this->partners;
         else
-            return empty($partners[$no]) ? array() : $partners[$no];
+            return empty($this->partners[$no]) ? array() : $this->partners[$no];
     }
 
-    public function setPartners($no, $config){
-        if(!empty($no) && $this->redis)
+    public function setPartner($no, $config){
+        if(!empty($no) && $this->redis){
+            $this->partners = array();
             return $this->redis->hset("page_partners" , $no, json_encode($config));
-        else return false;
+        }else return false;
+    }
+    public function delPartner($no){
+        if(!empty($no)){
+            $this->partners = array();
+            return $this->redis->hdel("page_partners", $no);
+        }else 
+            return false;
     }
 }

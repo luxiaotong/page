@@ -99,4 +99,14 @@ class Tool_Request{
     public static function hasPost(){
         return !empty($_POST);
     }
+
+    public static function getPost(){
+        static $cache = array();
+        if(empty($cache)){
+            foreach((array)$_POST as $k => $p){
+                $cache[$k] = self::getStr($k, "post");
+            }
+        }
+        return $cache;
+    }
 }

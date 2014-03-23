@@ -1,0 +1,22 @@
+<?php
+    if(empty($box_level)){
+        $box_level = 0;
+    }
+    $class_map = array("success", "info", "warning", "danger");
+    if(empty($class_map[$box_level])){
+        $class = "success";
+    }else
+        $class = $class_map[$box_level];
+?>
+
+<?php if(!empty($box_msg)){ ?>
+<div class="alert alert-<?= $class ?>">
+    <p><?= $box_msg ?></p>
+    <?php if(!empty($box_url)){
+    ?>
+    <p><a class='alert-link' href='<?=$box_url?>'>点击此处跳转...</a></p>
+    <?php
+    }
+    ?>
+</div>
+<?php } ?>

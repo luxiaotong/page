@@ -1,0 +1,11 @@
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
+
+<div class="alert alert-danger">
+注意：检测到redis已经有数据，此操作将导致redis里的数据使用pageconfig.ini覆盖，请谨慎选择！
+</div>
+
+<form role="form" method="post">
+    <button type="submit" class="btn btn-primary" name="submit" value="notempty">确认重置</button>
+</form>
+
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>
