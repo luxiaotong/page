@@ -12,7 +12,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
             "navs" => array(
                 "page" => "PAGE",
                 "machine" => "测试机管理",
-                "hithere" => "hi there",
+                "deploy" => "SVN部署",
             ),
             "pageNavs" => array(
                 "index" => "合作方配置",
