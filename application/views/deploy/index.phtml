@@ -1,6 +1,57 @@
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
 
+<form class="form-horizontal" method="post" role="form" id="deployform">
+    <div class="form-group">
+        <label class="col-sm-2 control-label">SVN地址</label>
+        <div class="col-sm-6 dropdown">
+            <input id="srcaddr" class="form-control" type="text" name="srcaddr"  data-toggle="dropdown">
+            <ul class="dropdown-menu" role="menu" aria-labelledby="srcaddr" style="margin:0 15px 0 15px">
+                <?php foreach ( $primary_svn as $key => $value ) { ?>
+                <li role="presentation"><a role="menuitem" onclick="set_srcaddr('<?=$value?>')"><?=$value?></a></li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
 
+    <div class="form-group">
+        <label class="col-sm-2 control-label">测试机地址</label>
+        <div class="col-sm-6">
+            <select class="form-control" id="desaddr" name="desaddr">
+            <?php foreach ( $test_mechine as $key => $ip ) { ?>
+            <option><?=$ip?></option>
+            <?php } ?>
+            </select>
+        </div>    
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-7">
+            <button class="btn btn-md btn-primary " type="button" id="send">部署测试机</button>
+        </div>
+    </div>
+</form>
 
+<script>
+$("input#srcaddr").click(function(){
+    
+});
+
+$("button#send").click(function(){
+    
+    //start post data
+    $.post('/deploy/send', $("form#deployform").serialize(), function(data){
+        if (data.rst == 1) {
+            alert('123');
+        } else if( data.errno ) {
+        }
+    });
+});
+
+function set_srcaddr(srcaddr) {
+    if ( srcaddr ) {
+        $("input#srcaddr").val(srcaddr);
+    }
+}
+
+</script>
 
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>
