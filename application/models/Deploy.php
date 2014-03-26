@@ -29,14 +29,14 @@ class DeployModel {
     const RSYNC_MODULE_V4 = 'weibov4_wap';
 
     //const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
-    const SVN_PARAM = ' export --force --config-dir ~xiaotong/.subversion/ ';
+    const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
     const RSYNC_PARAM = '-avz --port=8875 --delete --include=js/static/ --exclude=js/* --exclude=css/* --exclude=img/* --exclude=test/* ';
 
     //const CHECKOUT_PATH_V3 = '/data1/sinawapcms/code/svn/weibo/svn/';
     //const CHECKOUT_PATH_V4 = '/data1/sinawapcms/code/svn/weibo/svn_v4/';
 
-    const CHECKOUT_PATH_V3 = '/home/xiaotong/';
-    const CHECKOUT_PATH_V4 = '/home/xiaotong/';
+    const CHECKOUT_PATH_V3 = '~www-data/';
+    const CHECKOUT_PATH_V4 = '~www-data/';
 
     public function __construct() {
         //$config = new Yaf_Config_Ini(APP_PATH . "/conf/deploy.ini", "account");
@@ -61,7 +61,7 @@ class DeployModel {
 
         /** svn命令组装 */
         $svn_command = "svn " . self::SVN_PARAM . " {$srcaddr}  " . $checkout_path; //force可以覆盖已存在目录
-        $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} 2>&1";
+        $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www-data/output 2>&1 &";
         /** 加入命令池，便于统一管理，检测返回值，根据逻辑终止执行相应语句 */
         $command_pool['svn'] = array('cmd' => $svn_command);
         
@@ -77,10 +77,7 @@ class DeployModel {
         if ( !empty($command_pool) ) {
             foreach ( $command_pool as $key => $command ) {
                 if ( $key == 'rsync' ) {
-                    var_dump($command['cmd']);exit;
-                } else {
-                    var_dump(shell_exec('whoami'));exit;
-                    var_dump($command['cmd']);exit;
+                    var_dump($command['cmd'], $output);exit;
                 }
                 $output = shell_exec($command['cmd']);
             }
