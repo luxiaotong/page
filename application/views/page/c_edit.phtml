@@ -16,6 +16,12 @@
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delModal">删除此业务</button>
     </div>
     <hr/>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" title="业务码">业务码</label>
+        <div class="col-sm-10">
+            <input name="partnerid" value="<?=$partnerid?>" title="业务号" type="text" class="form-control"  placeholder="业务码" disabled>
+        </div>
+    </div>
 <?php
         foreach($pi as $k => $v){ 
             $name = empty($mpi[$k . "-name"]) ? $k : $mpi[$k . "-name"];
