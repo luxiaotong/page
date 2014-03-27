@@ -23,16 +23,34 @@ class Tool_Func{
         return $ini;
     }
 
+    /**
+     * change some simple key-val array to complex array(multi dimension)
+     * 
+     * eg. array('a.b.c' => 'c');
+     * retrun array('a'=> array('b'=> array('c'=>'c')));
+     *
+     * @param array $ini
+     * @param string $speerator
+     * @param array $arr
+     *
+     * @return array result
+     */
     static function ini2array($ini, $seperator = ".", &$arr = NULL){
         foreach($ini as $k => $v){
+            $t = &$arr;
             do{
-                $dotpos = strrpos($k, $seperator);
+                $dotpos = strpos($k, $seperator);
                 if($dotpos === false){
-                    $arr[$k] = $v;
+                    $t[$k] = $v;
+                    unset($t);
                     break;
                 }else{
-                    $v = array(substr($k, $dotpos + 1) => $v);
-                    $k = substr($k, 0, $dotpos);
+                    $key = substr($k, 0, $dotpos);
+                    $k = substr($k, $dotpos + 1);
+
+                    $p = &$t;
+                    unset($t);
+                    $t = &$p[$key];
                 }
             }while(true);
         }
