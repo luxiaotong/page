@@ -10,8 +10,8 @@ class PartnerModel{
 
     private function _getRedis(){
         //初使化redis配置
-        $config = new Yaf_Config_Ini(APP_PATH . "/conf/source.ini", "product");
-        $this->redis = new DB_Redis($config->redis);
+        $config = new Yaf_Config_Ini(APP_PATH . "/conf/source.ini", "redis");
+        $this->redis = new DB_Redis($config);
     }
 
     /**
