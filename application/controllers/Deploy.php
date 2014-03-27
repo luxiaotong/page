@@ -17,8 +17,11 @@ class DeployController extends Yaf_Controller_Abstract {
     }
 
     public function sendAction() {
+        set_time_limit(0);
+
         if ( !empty($_POST['srcaddr']) && !empty($_POST['desaddr']) ) { 
             $this->deploy_obj->run_deploy($_POST['srcaddr'], $_POST['desaddr']);
+            die(json_encode(array('rst' => 1)));
         }
     }
 

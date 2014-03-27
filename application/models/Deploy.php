@@ -2,21 +2,7 @@
 class DeployModel {
     
     private $test_mechine = array(
-        '218.30.115.93', 
-        '10.210.74.179', 
-        '10.210.74.178', 
-        '202.108.37.212',
-        '172.16.11.212',
-        '172.16.152.239',
-        '172.16.152.240',
-        '172.16.152.241',
-        '172.16.152.242',
-        '172.16.152.244',
-        '172.16.152.245',
-        '172.16.152.246',
-        '172.16.152.247',
-        '218.206.86.80',//加上80仿真测试机 不然看不见default日志 by haoming 20130717
-        '172.16.86.80',
+        '10.210.234.183',
     );
 
     private $svn_account = array();
@@ -26,7 +12,8 @@ class DeployModel {
     const SVN_PREFIX_V4 = 'https://svn1.intra.sina.com.cn/weibo_mobile/wap/';
 
     const RSYNC_MODULE_V3 = 'weibo_source';
-    const RSYNC_MODULE_V4 = 'weibov4_wap';
+    //const RSYNC_MODULE_V4 = 'weibov4_wap';
+    const RSYNC_MODULE_V4 = 'test';
 
     //const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
     const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
@@ -61,12 +48,12 @@ class DeployModel {
 
         /** svn命令组装 */
         $svn_command = "svn " . self::SVN_PARAM . " {$srcaddr}  " . $checkout_path; //force可以覆盖已存在目录
-        $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www-data/output 2>&1 &";
+        $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www-data/svn_output 2>&1";
         /** 加入命令池，便于统一管理，检测返回值，根据逻辑终止执行相应语句 */
         $command_pool['svn'] = array('cmd' => $svn_command);
         
         /** rsync命令组装 */
-        $rsync_command = " rsync " . self::RSYNC_PARAM . " {$checkout_path} {$desaddr}::{$rsync_module} 2>&1";
+        $rsync_command = " rsync " . self::RSYNC_PARAM . " {$checkout_path} {$desaddr}::{$rsync_module} >~www-data/rsync_outout 2>&1";
         $command_pool['rsync'] = array('cmd' => $rsync_command);
 
         $this->run_command($command_pool);
@@ -76,13 +63,9 @@ class DeployModel {
 
         if ( !empty($command_pool) ) {
             foreach ( $command_pool as $key => $command ) {
-                if ( $key == 'rsync' ) {
-                    var_dump($command['cmd'], $output);exit;
-                }
                 $output = shell_exec($command['cmd']);
             }
         }
-        exit;
     }
 
     /**
