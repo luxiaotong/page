@@ -105,4 +105,17 @@ class DB_Redis{
             return call_user_func_array(array($link, $method), $params);
         }else return false;
     }
+
+    public function close(){
+        foreach((array)$this->links as $link){
+            if(method_exists($link, "close")){
+                $link->close();
+            }
+        }
+        $this->links = array();
+    }
+
+    public function __destruct(){
+        $this->close();
+    }
 }

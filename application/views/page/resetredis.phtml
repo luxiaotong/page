@@ -1,5 +1,6 @@
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
 
+<div class='container'>
 <?php if(!empty($error)){ ?>
 <div class="alert alert-danger">
 <?= $error ?>
@@ -16,5 +17,6 @@
     </div>
     <button type="submit" class="btn btn-primary" name="submit" value="notempty">生成</button>
 </form>
+</div>
 
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>

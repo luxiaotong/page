@@ -10,6 +10,7 @@
 ?>
 
 <?php if(!empty($box_msg)){ ?>
+<div class="container">
 <div class="alert alert-<?= $class ?>">
     <p><?= $box_msg ?></p>
     <?php if(!empty($box_url)){
@@ -18,5 +19,6 @@
     <?php
     }
     ?>
+</div>
 </div>
 <?php } ?>
