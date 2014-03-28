@@ -16,8 +16,8 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
             ),
             "pageNavs" => array(
                 "index" => "合作方配置",
-                "easyreset" => "简单初使化redis",
-                "resetredis" => "重新填写redis数据",
+                "easyreset" => "使用配置文件初使化redis",
+        //        "resetredis" => "重新填写redis数据",
             ),
         );
         $dispatcher->initView(APP_PATH . "/application/views")->assign($assignParams);

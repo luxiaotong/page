@@ -8,12 +8,15 @@ class PageController extends Yaf_Controller_Abstract{
     //合作方可配置的字段说明
     private static $mapPartnerInfo;
 
+    private static $iniFile;
+
     //所有控制器之前要完成的行为
     public function init(){
+        self::$iniFile = APP_PATH . "/conf/page/pageconfig.ini";
         $this->pm = new PartnerModel();
         self::$mapPartnerInfo = array();
 
-        $mpi = new Yaf_Config_Ini(APP_PATH . "/conf/page/mappartnerinfo.ini");
+        $mpi = new Yaf_Config_Ini(self::$iniFile);
         foreach($mpi as $k => $v){
         }
         $this->mappartnerinfo = $mpi->toArray();
@@ -118,23 +121,30 @@ class PageController extends Yaf_Controller_Abstract{
      * 根据配置文件/conf/pageconfig.ini导入到redis数据库
      */
     public function easyResetAction(){
-        $this->getView()->assign("title", "简单初初使化redis");
+        $this->getView()->assign("title", "使用配置文件初使化redis");
         $partners = $this->pm->getPartners();
         if(Tool_Request::hasPost() || empty($partners)){
             Yaf_Dispatcher::getInstance()->disableView();
-            $config = new Yaf_Config_Ini(APP_PATH . "/conf/page/pageconfig.ini", 'product');
-            $partners = $config->partners->toArray();
-            $pm = new PartnerModel();
-            $succ = 0;
-            foreach($partners as $k => $v){
-                if($pm->setPartner($k, $v))
-                    $succ++;
-            }
-            $msg = "共找到" . count($partners) . " 个合作方，添加 $succ 条, 更新 " . (count($partners) - $succ) . " 条";
+            $config = new Yaf_Config_Ini(self::$iniFile, 'product');
+
+            $this->pm->resetRedis($config->toArray());
+
+            $msg = "导入完成";
             $this->getView()->assign(array("box_level" => 0, "box_msg" => $msg));
             $this->getView()->display("pub/msg.phtml");
         }
     }
+    /**
+     * 比较redis里的数据和配置文件里的数据的不一样的地方
+     */
+    public function compareAction(){
+            $config = new Yaf_Config_Ini(self::$iniFile, 'product');
+    }
+
+
+
+
+
 
     /**
      * 根据common.php导入数据
