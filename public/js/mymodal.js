@@ -163,8 +163,8 @@ var mymodal = {
     },
     //提供给外部调用的方法
     show : function (p){
-        this.params= p
-            $("#myModal").modal();
+        this.params= p;
+        $("#myModal").modal();
     },
     //为弹窗提示提供一种快捷的方法，这个模态框只有一个关闭按钮和一行文字
     //其中那一行文字可控
