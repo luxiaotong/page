@@ -5,7 +5,7 @@
         <label class="col-sm-2 control-label">SVN地址</label>
         <div class="col-sm-6 dropdown">
             <input id="srcaddr" class="form-control" type="text" name="srcaddr"  data-toggle="dropdown">
-            <ul class="dropdown-menu" role="menu" aria-labelledby="srcaddr" style="margin:0 15px 0 15px">
+            <ul id="autocomplete" class="dropdown-menu" role="menu" aria-labelledby="srcaddr" style="margin:0 15px 0 15px;width:96%">
                 <?php foreach ( $primary_svn as $key => $value ) { ?>
                 <li role="presentation"><a role="menuitem" onclick="set_srcaddr('<?=$value?>')"><?=$value?></a></li>
                 <?php } ?>
@@ -31,9 +31,36 @@
 </form>
 
 <script>
-$("input#srcaddr").click(function(){
-    
+$("input#srcaddr").keyup(function(event){
+    var srcaddr = event.target.value;
+    if ( srcaddr != '' && is_available_input(event) ) {
+        $.post('/deploy/search', {q:srcaddr}, function(data){
+            if ( $(data.srcaddr).length > 0 ) {
+                $("ul#autocomplete").empty();
+                $(data.srcaddr).each(function(key, value) {
+                    $("ul#autocomplete").append(
+                        '<li role="presentation"><a role="menuitem" onclick="set_srcaddr(\'' + value + '\')">' + value + '</a></li>'
+                    );
+                });
+                $('.dropdown-toggle').dropdown();
+            }
+        });
+
+    }
 });
+
+function is_available_input(event) {
+    if ( event.which >= 65 && event.which <= 90
+        || event.which >= 48 && event.which <= 57
+        || event.which == 8
+        || event.which == 16
+        || event.which == 191 ) {
+        return 1;
+    } else {
+        return 0;
+    }
+
+}
 
 $("button#send").click(function(){
     
@@ -52,6 +79,8 @@ function set_srcaddr(srcaddr) {
     }
 }
 
+function open_dropdown() {
+}
 </script>
 
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>

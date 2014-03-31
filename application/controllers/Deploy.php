@@ -25,4 +25,12 @@ class DeployController extends Yaf_Controller_Abstract {
         }
     }
 
+    public function searchAction() {
+        if ( !empty($_POST['q']) ) {
+            $srcaddr = $this->deploy_obj->search_srcaddr($_POST['q']);
+            $rst = array('rst' => 1, 'srcaddr' => $srcaddr);
+            die(json_encode($rst));
+        }
+    }
+
 }

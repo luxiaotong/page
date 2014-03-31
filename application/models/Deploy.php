@@ -99,4 +99,26 @@ class DeployModel {
             return false;
         }
     }
+
+    public function search_srcaddr($srcaddr) {
+        $tmp_pos = strrpos($srcaddr, '/');
+        $search = substr($srcaddr, 0, $tmp_pos);
+        $filter = substr($srcaddr, $tmp_pos + 1);
+        $svn_command = "svn list --username {$this->svn_account['user']} --password {$this->svn_account['password']} $search";
+        
+        $output = shell_exec($svn_command);
+        if ( !empty($output) ) {
+            $rel_paths = explode("\n", rtrim($output, "\n"));
+            foreach ( $rel_paths as $key => $rel_path ) {
+                if ( empty($filter) || strpos($rel_path, $filter) === 0 ) {
+                    $abs_paths[] = $search . '/' . $rel_path;
+                }
+            }
+            return $abs_paths;
+        } else {
+            return array();
+        }
+        
+        
+    }
 }
