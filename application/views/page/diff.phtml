@@ -1,0 +1,29 @@
+<?php if(empty($diff['mod']) && empty($diff['add']) && empty($diff['del'])):?>
+<div class="row">
+    <div class="col-lg-6">
+        两个文件完全一致
+    </div>
+</div>
+<?php else:?>
+
+<table class="table" style="color:#ffffff">
+    <?php foreach($diff['del'] as $k => $v):?>
+        <tr class="label-warning">
+        <td><strong> - </strong><?=$k . "=" . $v?></td>
+        </tr>
+    <?php endforeach;?>
+    <?php foreach($diff['mod'] as $k => $v):?>
+        <tr class="label-success">
+        <td><strong> - </strong><?=$k . "=" . $v[0]?></td>
+        </tr>
+        <tr class="label-success">
+        <td><strong> + </strong><?=$k . "=" . $v[1]?></td>
+        </tr>
+    <?php endforeach;?>
+    <?php foreach($diff['add'] as $k => $v):?>
+        <tr class="label-danger">
+        <td><strong> + </strong><?=$k . "=" . $v?></td>
+        </tr>
+    <?php endforeach;?>
+</table>
+<?php endif;?>
