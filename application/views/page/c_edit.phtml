@@ -1,55 +1,25 @@
-<form class="form-horizontal" role="form" method="post">
-    <?php 
-    if(empty($partnerid)){
-    ?>
+<form class="form-horizontal" role="form" method="post" action="<?=empty($action_url) ? '' : $action_url?>">
+
+    <?php if(!empty($partnerid) && !empty($action) && $action == "edit")://如果是编辑页，则需要加一些按钮?>
+    <div class="form-group text-center">
+        <button type="button" class="btn btn-danger" data-toggle="mymodal" data-title="确认删除" data-content='确认删除这个业务码么<?=$partnerid?>??' data-url="/page/del" data-field='{"partnerid":"<?=$partnerid?>"}'>删除此业务</button>
+    </div>
+    <?php endif; ?>
+
+    <hr/>
     <div class="form-group">
         <label class="col-sm-2 control-label" title="业务码">业务码</label>
         <div class="col-sm-10">
-            <input name="partnerid" value="" title="业务号" type="text" class="form-control"  placeholder="业务码">
+        <input name="partnerid" value="<?=empty($partnerid) ? '' : $partnerid?>" title="业务号" type="text" class="form-control"  placeholder="业务码" <?= (!empty($action) && $action == 'edit') ? 'readonly' : ''?> >
         </div>
     </div>
 
-    <?php
-    }else {
-?>
-    <div class="form-group text-center">
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delModal">删除此业务</button>
-    </div>
-    <hr/>
-    <div class="form-group">
-        <label class="col-sm-2 control-label" title="业务码">业务码</label>
-        <div class="col-sm-10">
-            <input name="partnerid" value="<?=$partnerid?>" title="业务号" type="text" class="form-control"  placeholder="业务码" disabled>
-        </div>
-    </div>
-<?php
-        foreach($pi as $k => $v){ 
-            $name = empty($mpi[$k . "-name"]) ? $k : $mpi[$k . "-name"];
-            $desc = empty($mpi[$k . "-desc"]) ? $k : $mpi[$k . "-desc"];
-    ?>
-    <div class="form-group">
-        <label class="col-sm-2 control-label" title="<?=$k?>"><?= $name ?></label>
-        <div class="col-sm-10">
-            <input name="<?=$k?>" value="<?=$v?>" title="<?=$desc?>" type="text" class="form-control"  placeholder="<?=$desc?>">
-            <span class="help-block">
-            <?php 
-            if(!isset($hosts[$k])){
-            }else if($hosts[$k] === false){
-                echo "未设置hosts";
-            }else if(!empty($hosts[$k])){
-                echo "指向的hosts:" . $hosts[$k];
-            }
-            ?>
-            </span>
-        </div>
-    </div>
-    <?php }} ?>
-    <hr/>
+    <hr id="TAG_form_input_end"/>
     <div class="form-group">
         <label class="col-sm-2 control-label" title="">添加字段</label>
         <div class="col-sm-10">
             <div class="input-group" id="addkeyarea">
-                <input autocomplete='off' id="addkey" type="text" class="form-control" placeholder="输入字段名，多层以.分隔">
+                <input autocomplete='off' id="addkey" type="text" class="form-control" placeholder="输入字段名，多层以-分隔">
                 <ul class="dropdown-menu" role="menu" id="addkeydropdown">
                 </ul>
                 <span class="input-group-btn">
@@ -62,77 +32,42 @@
     <hr/>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-default">提交</button>
+            <button type="submit" class="btn btn-default" data-toggle="ajaxsubmit">提交</button>
         </div>
     </div>
 </form>
-<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">确认</h4>
-      </div>
-      <div class="modal-body">
-           确认删除业务码<?=$partnerid?>?
-      </div>
-      <div class="modal-footer">
-        <form action="?action=del&partnerid=<?=$partnerid?>" method="post">
-        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="submit" name="submit" class="btn btn-primary">确认删除</button>
-        </form>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/modal.phtml'); ?>
+<script src="/js/page.js"></script>
 <script>
-var mpi = <?=json_encode(empty($mpi) ? array() : $mpi);?>;
-var mpi_filter = <?=json_encode(empty($mpi_filter) ? array() : $mpi_filter);?>;
-var mpi_can_add = <?=json_encode(empty($mpi_can_add) ? array() : $mpi_can_add);?>;
-var pi = <?=json_encode(empty($pi) ? array() : $pi);?>;
+            var partnerid = '<?= $partnerid?>';
+            var partner_info = <?=json_encode($partner_info)?>;
+            var partner_desc = <?=json_encode($partner_desc)?>;
+            var hosts = <?=json_encode($hosts)?>;
+            var field_avail = <?=json_encode($field_avail)?>;
 
-$("#addkey").keyup(function(){
-        key = $(this).val();
-        ddhtml = '';
-        $.each(mpi_can_add, function(k, v){
-            if(k.indexOf(key) == 0)
-            ddhtml += "<li><a data=\"" + k + "\" href=\"javascript:$('#addkey').val('" + k +"');\">"
-            + mpi[k+"-name"] + "(" + k + ")</a></li>";
-            })
-        $("#addkeydropdown").html(ddhtml);
-        }).focus(function(){
-            $(this).keyup();
-            $("#addkeydropdown").show();
+            //填充页面
+            page.init_form_area(partner_info);
+
+            $("#addkey").keyup(function(){
+                //当用户填写添加字段的input框的时候，触发这个事件
+                $("#addkeydropdown").html(page.gen_add_dropdown_by_input($(this).val()));
+            }).focus(function(){
+                $(this).keyup();
+                $("#addkeydropdown").show();
             }).focusout(function(){
                 $("#addkeydropdown").hide('fast');
-                })
-$("#addkeyarea button").click(function(){
-        key = $("#addkey").val();
-        if(key == ''){
-        alert("输入内容");
-        return ;
-        }else if(pi[key] != undefined){
-        alert("已经存在这个字段了, 可以直接修改");
-        return ;
-        }else{
-        delete(mpi_can_add[key]);
-        pi[key] = '';
-        if(mpi[key + '-name'] == undefined){
-        name = key;
-        desc = key;
-        }else{
-        name = mpi[key + "-name"];
-        desc = mpi[key + "-desc"];
-        }
-        newhtml = '<div class="form-group">' +
-        '<label class="col-sm-2 control-label text-success" title="' + key + '">' + name + '</label>' +
-        '<div class="col-sm-10">' +
-        '<input name="' + key + '" title="' + desc + '" type="text" class="form-control text-success"  placeholder="' + desc + '">' +
-        '</div>' +
-        '</div>';
-        $(this).parents(".form-group").prev().prev().after(newhtml);
-        $("#addkey").val("");
-        }
-})
+            });
+            $("#addkeyarea button").click(function(){
+                key = $("#addkey").val();
+                if(key == ''){
+                    mymodal.notice("请填写相关字段名称");
+                }else if(partner_info[key] != undefined){
+                    mymodal.notice("已经存在这个字段了, 可以直接修改");
+                }else{
+                    delete(field_avail[key]);
+                    page.insert_form_input(key, "", true);
+                    $("#addkey").val("");
+                }
+            })
 </script>
 

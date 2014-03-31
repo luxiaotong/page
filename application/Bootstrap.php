@@ -16,7 +16,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
             ),
             "pageNavs" => array(
                 "index" => "合作方配置",
-                "easyreset" => "使用配置文件初使化redis",
+                "reset" => "使用配置文件初使化redis",
         //        "resetredis" => "重新填写redis数据",
             ),
         );
