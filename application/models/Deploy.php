@@ -7,6 +7,7 @@ class DeployModel {
 
     private $svn_account = array();
 
+    private $redis_obj;
 
     const SVN_PREFIX_V3 = 'https://svn1.intra.sina.com.cn/weibo/wap/';
     const SVN_PREFIX_V4 = 'https://svn1.intra.sina.com.cn/weibo_mobile/wap/';
@@ -30,6 +31,10 @@ class DeployModel {
         //$this->svn_account = $config->svn;
         $this->svn_account['user'] = 'xiaotong3';
         $this->svn_account['password'] = 'sina@713711';
+        
+        //初使化redis配置
+        $config = new Yaf_Config_Ini(APP_PATH . "/conf/source.ini", 'redis');
+        $this->redis_obj = new DB_Redis($config);
     }
 
     public function get_test_mechine() {
@@ -104,9 +109,25 @@ class DeployModel {
         $tmp_pos = strrpos($srcaddr, '/');
         $search = substr($srcaddr, 0, $tmp_pos);
         $filter = substr($srcaddr, $tmp_pos + 1);
-        $svn_command = "svn list --username {$this->svn_account['user']} --password {$this->svn_account['password']} $search";
+
+        //get data from redis
+        $output = $this->redis_obj->hget('svnaddr', $search);
+
+        //get data from svn list and set to redis
+        if ( empty($output) ) {
         
-        $output = shell_exec($svn_command);
+            $svn_command = "svn list --username {$this->svn_account['user']} --password {$this->svn_account['password']} $search";
+            $output = shell_exec($svn_command);
+            $this->redis_obj->hset('svnaddr', $search, $output);
+        }
+        
+        // splite output and filter
+        return $this->splite_relpaths_from_output($output, $search, $filter);
+        
+    }
+
+    private function splite_relpaths_from_output($output, $search, $filter)
+    {
         if ( !empty($output) ) {
             $rel_paths = explode("\n", rtrim($output, "\n"));
             foreach ( $rel_paths as $key => $rel_path ) {
@@ -118,7 +139,5 @@ class DeployModel {
         } else {
             return array();
         }
-        
-        
     }
 }
