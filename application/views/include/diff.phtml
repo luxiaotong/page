@@ -3,49 +3,22 @@
  * 用来比较两个文件的异同，使用Tool_Diff::render()返回的数组进行渲染
  <link href="http://localhost/php-diff/example/styles.css"  rel="stylesheet">
  */
+if(empty($diff_opcode)){
+    echo "两个文件一致";
+}else{
 ?>
-<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
-
-<style type="text/css">
-    .table-diff >tbody>tr> td,
-    .table-diff >tbody>tr> th,
-    .table-diff >tbody+tbody,
-    .table-diff >tbody+tbody
-    {
-        border-top:0px;
-        padding-top:0px;
-        padding-bottom:0px;
-    }
-    .table-diff>thead>tr>th{
-        border-right: 2px solid #dddddd;
-        background-color: #dddddd;
-    }
-
-    .table-diff >tbody>tr> th{
-        border-right: 2px solid #dddddd;
-        background-color: #f5f5f5;
-    }
-    .table-diff
-
-</style>
 
 <table class="table table-condensed table-hover table-diff">
 <thead>
-<tr>
-<th colspan="2">Old Version</th>
-<th colspan="2">New Version</th>
-</tr>
+<tr><th colspan="2" width="50%">Old Version</th><th colspan="2" width="50%">New Version</th></tr>
 </thead>
 <?php
-foreach($op as $i => $blocks) {
-    if($i > 0) {
+foreach($diff_opcode as $i => $blocks) {
+    if($i > 0) ://除第一组以外的得了会额外加一行
 ?>
-<tbody class="Skipped">
-<th>&hellip;</th><td>&nbsp;</td>
-<th>&hellip;</th><td>&nbsp;</td>
-</tbody>
+<tbody class="Skipped"><th>&hellip;</th><td>&nbsp;</td><th>&hellip;</th><td>&nbsp;</td></tbody>
 <?php
-    }
+    endif;
 
     foreach($blocks as $change) {
 ?>
@@ -65,7 +38,6 @@ foreach($op as $i => $blocks) {
 <?php
             }
         }
-        // Added lines only on the right side
         else if($change['tag'] == 'insert') {
             foreach($change['changed']['lines'] as $no => $line) {
                 $toLine = $change['changed']['offset'] + $no + 1;
@@ -147,3 +119,4 @@ foreach($op as $i => $blocks) {
 ?>
 </table>
 
+<?php }?>

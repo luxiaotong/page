@@ -32,6 +32,33 @@ class Tool_Diff{
         return $result;
     }
 
+    /**
+     * 比较两个配置数组的不同点
+     * 
+     * @param array $old
+     * @param array $new
+     * @param bool $sort 是否按key 进行一次排序
+     *
+     * @return array diff_opcode
+     */
+    public static function ini($old, $new, $sort = true, $options = array()){
+        if($sort){
+            ksort($old);
+            ksort($new);
+        }
+        $a = $b = array();
+        foreach($old as $k => $v){
+            $a[] = $k . " = \"" . $v . "\"";
+        }
+        foreach($new as $k => $v){
+            $b[] = $k . " = \"" . $v . "\"";
+        }
+        return self::render($a, $b, $options);
+    }
+
+    /**
+     * 将两个数组渲染成前端可以识别的数组
+     */
     public static function render($old, $new, $options = array()){
         $diff = self::raw($old, $new, $options);
         if($diff){

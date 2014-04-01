@@ -214,4 +214,12 @@ class PartnerModel{
             return array();
         }
     }
+    public function writeToini($config){
+        $content = "[product]\n";
+        $config = Tool_Func::array2ini($config);
+        foreach($config as $k => $v){
+            $content .= "$k = \"$v\"\n";
+        }
+        return Tool_Log::writeToFile($content, $this->pageconfigInifile);
+    }
 }

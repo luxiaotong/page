@@ -62,4 +62,20 @@ class Tool_Log{
         umask($oldmask);
         return $return;
     }
+    public static function writeToFile($content, $file){
+        //有些服务器的权限有问题
+        $oldmask = umask(0);
+        self::makeDir(dirname($file));
+
+        $fp = fopen($file, "wb");
+        if($fp){
+            fwrite($fp, $content);
+            fclose($fp);
+            umask($oldmask);
+            return true;
+        }else{
+            umask($oldmask);
+            return false;
+        }
+    }
 }

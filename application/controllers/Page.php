@@ -131,13 +131,19 @@ class PageController extends Yaf_Controller_Abstract{
                 }else{
                     $this->pm->setPageconfig("partners", $partnerid, Tool_Func::ini2array($config, "-"));
 
-                    $diff= Tool_Diff::arrDiff(Tool_Func::array2ini($partnerinfo, "-"), $config);
+                    $diff= Tool_Diff::ini(Tool_Func::array2ini($partnerinfo, "-"), $config);
 
-                    $this->response["content"] = "更新成功,以下是修改的内容:<br/>";
-                    //渲染diff相关的模板
-                    $this->getView()->assign("diff", $diff);
-                   // $this->response["content"] .= $this->getView()->render("page/diff.phtml");
-                    $this->response["content"] .= $this->getView()->render("include/diff.phtml");
+                    if(!empty($diff)){
+                        $this->response["content"] = "更新成功,以下是修改的内容:<br/>";
+                        //渲染diff相关的模板
+                        $this->getView()->assign("diff_opcode", $diff);
+                        $this->response["content"] .= $this->getView()->render("include/diff.phtml");
+                        $this->response['width'] = "1000px";
+                    }else{
+                        $this->response["content"] = "没有变化";
+                        $this->response['width'] = "600px";
+                    }
+
                     $this->response["refresh"] = true;
                 }
             }
@@ -222,5 +228,41 @@ class PageController extends Yaf_Controller_Abstract{
         }else{
             //这里要写两个文件diff相关的信息
         }
+    }
+
+    public function publishAction(){
+        Yaf_Dispatcher::getInstance()->disableView();
+        if(!Tool_Request::hasPost()){
+            $msg = "参数错误!!";
+            $assignParams['box_msg'] = $msg;
+            $assignParams['box_url'] = '/page/';
+        }else{
+            //删除操作
+            $t = $this->pm->writeToini($this->pm->getPageconfigRedis());
+            if($t){
+                $msg = "生成文件成功";
+            }else{
+                $msg = "生成文件失败";
+            }
+            $assignParams['box_msg'] = $msg;
+            $assignParams['box_url'] = '/page/';
+        }
+        $this->getView()->assign($assignParams);
+        $this->getView()->display("pub/msg.phtml");
+    }
+
+    public function diffAction(){
+        $old = $this->pm->getPageconfigIni();
+        $new = $this->pm->getPageconfigRedis();
+        $diff_opcode = Tool_Diff::ini(Tool_Func::array2ini($old, "-"), Tool_Func::array2ini($new, "-"), true, array("context" => 5));
+        if(empty($diff_opcode)){
+            Yaf_Dispatcher::getInstance()->disableView();
+            $msg = "文件一致，不需要发布";
+            $assignParams['box_msg'] = $msg;
+            $assignParams['box_url'] = '/page/';
+            $this->getView()->assign($assignParams);
+            $this->getView()->display("pub/msg.phtml");
+        }
+        $this->getView()->assign("diff_opcode", $diff_opcode);
     }
 }
