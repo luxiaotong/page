@@ -214,9 +214,4 @@ class PartnerModel{
             return array();
         }
     }
-
-    public function test(){
-        $r = $this->getPageconfigDesc("partners");
-        var_dump($r);
-    }
 }

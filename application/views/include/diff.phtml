@@ -1,0 +1,149 @@
+<?php
+/**
+ * 用来比较两个文件的异同，使用Tool_Diff::render()返回的数组进行渲染
+ <link href="http://localhost/php-diff/example/styles.css"  rel="stylesheet">
+ */
+?>
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
+
+<style type="text/css">
+    .table-diff >tbody>tr> td,
+    .table-diff >tbody>tr> th,
+    .table-diff >tbody+tbody,
+    .table-diff >tbody+tbody
+    {
+        border-top:0px;
+        padding-top:0px;
+        padding-bottom:0px;
+    }
+    .table-diff>thead>tr>th{
+        border-right: 2px solid #dddddd;
+        background-color: #dddddd;
+    }
+
+    .table-diff >tbody>tr> th{
+        border-right: 2px solid #dddddd;
+        background-color: #f5f5f5;
+    }
+    .table-diff
+
+</style>
+
+<table class="table table-condensed table-hover table-diff">
+<thead>
+<tr>
+<th colspan="2">Old Version</th>
+<th colspan="2">New Version</th>
+</tr>
+</thead>
+<?php
+foreach($op as $i => $blocks) {
+    if($i > 0) {
+?>
+<tbody class="Skipped">
+<th>&hellip;</th><td>&nbsp;</td>
+<th>&hellip;</th><td>&nbsp;</td>
+</tbody>
+<?php
+    }
+
+    foreach($blocks as $change) {
+?>
+<tbody>
+<?php
+        if($change['tag'] == 'equal') {
+            foreach($change['base']['lines'] as $no => $line) {
+                $fromLine = $change['base']['offset'] + $no + 1;
+                $toLine = $change['changed']['offset'] + $no + 1;
+?>
+<tr>
+<th><?=$fromLine?></th>
+<td class="Left"><span><?=$line?></span>&nbsp;</span></td>
+<th><?=$toLine?></th>
+<td class="Right"><span><?=$line?></span>&nbsp;</span></td>
+</tr>
+<?php
+            }
+        }
+        // Added lines only on the right side
+        else if($change['tag'] == 'insert') {
+            foreach($change['changed']['lines'] as $no => $line) {
+                $toLine = $change['changed']['offset'] + $no + 1;
+?>
+<tr class="success">
+<th>&nbsp;</th>
+<td class="Left">&nbsp;</td>
+<th><?=$toLine?></th>
+<td class="Right"><ins><?=$line?></ins>&nbsp;</td>
+</tr>
+<?php
+            }
+        }
+        else if($change['tag'] == 'delete') {
+            foreach($change['base']['lines'] as $no => $line) {
+                $fromLine = $change['base']['offset'] + $no + 1;
+?>
+<tr class="danger">
+<th><?=$fromLine?></th>
+<td class="Left"><del><?=$line?></del>&nbsp;</td>
+<th>&nbsp;</th>
+<td class="Right">&nbsp;</td>
+</tr>
+<?php
+            }
+        }
+        // Show modified lines on both sides
+        else if($change['tag'] == 'replace') {
+            if(count($change['base']['lines']) >= count($change['changed']['lines'])) {
+                foreach($change['base']['lines'] as $no => $line) {
+                    $fromLine = $change['base']['offset'] + $no + 1;
+?>
+<tr class="warning">
+<th><?=$fromLine?></th>
+<td class="Left"><span><?=$line?></span>&nbsp;</td>
+<?php
+                    if(!isset($change['changed']['lines'][$no])) {
+                        $toLine = '&nbsp;';
+                        $changedLine = '&nbsp;';
+                    }
+                    else {
+                        $toLine = $change['base']['offset'] + $no + 1;
+                        $changedLine = '<span>'.$change['changed']['lines'][$no].'</span>';
+                    }
+?>
+    <th><?=$toLine?></th>
+    <td class="Right"><?=$changedLine?></td>
+</tr>
+<?php
+                }
+            }
+            else {
+                foreach($change['changed']['lines'] as $no => $changedLine) {
+                    if(!isset($change['base']['lines'][$no])) {
+                        $fromLine = '&nbsp;';
+                        $line = '&nbsp;';
+                    }
+                    else {
+                        $fromLine = $change['base']['offset'] + $no + 1;
+                        $line = '<span>'.$change['base']['lines'][$no].'</span>';
+                    }
+                    $toLine = $change['changed']['offset'] + $no + 1;
+?>
+<tr class="warning">
+<th><?=$fromLine?></th>
+<td class="Left"><span><?=$line?></span>&nbsp;</td>
+<th><?=$toLine?></th>
+<td class="Right"><?=$changedLine?></td>
+</tr>
+<?php
+                }
+            }
+        }
+?>
+</tbody>
+<?php
+    }
+}
+?>
+</table>
+
