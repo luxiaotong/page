@@ -1,6 +1,7 @@
 <?php
 class DeployController extends Yaf_Controller_Abstract {
 
+
     private $deploy_obj;
 
     public function init() {
