@@ -69,9 +69,9 @@ $("[data-toggle='ajaxsubmit']").click(function(){
             try{
                 d = $.parseJSON(data);
                 if(d.refresh){
-                    mymodal.refresh(d.content, d.refresh_url, d.title, d.button_name);
+                    mymodal.refresh(d.content, d.refresh_url, d.title, d.button_name, d.width);
                 }else {
-                    mymodal.notice(d.content, d.title, d.button_name);
+                    mymodal.notice(d.content, d.title, d.button_name, d.width);
                 }
 
             }catch(e){
@@ -91,6 +91,7 @@ var mymodal = {
         field:{},//提交的参数列表，当按钮里有commit的时候，会把这些参数提交到服务器
         close_refresh: false,//在关闭的时候跳转页面
         close_refresh_url: '',//在关闭的时候跳转页面地址，如果为空表示刷新本页
+        width: "600px",//这个modal的宽度
         buttons:[
         {
             ismark: false,//是否是默认按钮，即蓝色按钮
@@ -120,6 +121,9 @@ var mymodal = {
             $("#myModal .modal-title").html(p.title);
         if(p.content)
             $("#myModal .modal-body").html(p.content);
+        if(p.width){
+            $("#myModal .modal-dialog").css("width", p.width);
+        }
 
         f = $("#myModal form");
         if(p.url)
@@ -174,6 +178,7 @@ var mymodal = {
             content: c,//内容
             method: "get", //提交的方法
             url: "", //提交的链接地址
+            width: arguments[3] ?arguments[3] : "600px",
             buttons:[
                 {
                     ismark: true,//是否是默认按钮，即蓝色按钮
@@ -192,6 +197,7 @@ var mymodal = {
             url: "", //提交的链接地址
             close_refresh: true,
             close_refresh_url : r_u,
+            width: arguments[4] ?arguments[4] : "600px",
             buttons:[
                 {
                     ismark: true,//是否是默认按钮，即蓝色按钮

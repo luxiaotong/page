@@ -1,29 +1,13 @@
-<?php if(empty($diff['mod']) && empty($diff['add']) && empty($diff['del'])):?>
-<div class="row">
-    <div class="col-lg-6">
-        两个文件完全一致
-    </div>
-</div>
-<?php else:?>
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
 
-<table class="table" style="color:#ffffff">
-    <?php foreach($diff['del'] as $k => $v):?>
-        <tr class="label-warning">
-        <td><strong> - </strong><?=$k . "=" . $v?></td>
-        </tr>
-    <?php endforeach;?>
-    <?php foreach($diff['mod'] as $k => $v):?>
-        <tr class="label-success">
-        <td><strong> - </strong><?=$k . "=" . $v[0]?></td>
-        </tr>
-        <tr class="label-success">
-        <td><strong> + </strong><?=$k . "=" . $v[1]?></td>
-        </tr>
-    <?php endforeach;?>
-    <?php foreach($diff['add'] as $k => $v):?>
-        <tr class="label-danger">
-        <td><strong> + </strong><?=$k . "=" . $v?></td>
-        </tr>
-    <?php endforeach;?>
-</table>
-<?php endif;?>
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/diff.phtml'); ?>
+<form class="form-horizontal" role="form" method="post" action="<?=empty($action_url) ? '' : $action_url?>">
+
+<hr>
+    <div class="form-group text-center">
+        <button type="button" class="btn btn-danger" data-toggle="mymodal" data-title="确认提交" data-content='确认提交这些修改么，提交将发布到线上' data-url="/page/publish" data-field='{"online":"1"}'>确认提交修改</button>
+    </div>
+</form>
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/modal.phtml'); ?>
+
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>

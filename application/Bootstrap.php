@@ -17,6 +17,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
             "pageNavs" => array(
                 "index" => "合作方配置",
                 "reset" => "使用配置文件初使化redis",
+                "diff" => "比较与发布",
         //        "resetredis" => "重新填写redis数据",
             ),
         );
