@@ -13,11 +13,10 @@ class DeployModel {
     const SVN_PREFIX_V4 = 'https://svn1.intra.sina.com.cn/weibo_mobile/wap/';
 
     const RSYNC_MODULE_V3 = 'weibo_source';
-    //const RSYNC_MODULE_V4 = 'weibov4_wap';
-    const RSYNC_MODULE_V4 = 'test';
+    const RSYNC_MODULE_V4 = 'weibov4_wap';
 
     //const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
-    const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
+    const SVN_PARAM = ' export --force ';
     const RSYNC_PARAM = '-avz --port=8875 --delete --include=js/static/ --exclude=js/* --exclude=css/* --exclude=img/* --exclude=test/* ';
 
     //const CHECKOUT_PATH_V3 = '/data1/sinawapcms/code/svn/weibo/svn/';
@@ -27,10 +26,8 @@ class DeployModel {
     const CHECKOUT_PATH_V4 = '~www-data/';
 
     public function __construct() {
-        //$config = new Yaf_Config_Ini(APP_PATH . "/conf/deploy.ini", "account");
-        //$this->svn_account = $config->svn;
-        $this->svn_account['user'] = 'xiaotong3';
-        $this->svn_account['password'] = 'sina@713711';
+        $config = new Yaf_Config_Ini(APP_PATH . "/conf/deploy.ini", "account");
+        $this->svn_account = $config->svn;
         
         //初使化redis配置
         $config = new Yaf_Config_Ini(APP_PATH . "/conf/source.ini", 'redis');
@@ -55,6 +52,7 @@ class DeployModel {
         $svn_command = "svn " . self::SVN_PARAM . " {$srcaddr}  " . $checkout_path; //force可以覆盖已存在目录
         $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www-data/svn_output 2>&1";
         /** 加入命令池，便于统一管理，检测返回值，根据逻辑终止执行相应语句 */
+            var_dump($svn_command);exit;
         $command_pool['svn'] = array('cmd' => $svn_command);
         
         /** rsync命令组装 */
@@ -112,7 +110,7 @@ class DeployModel {
 
         //get data from redis
         $output = $this->redis_obj->hget('svnaddr', $search);
-
+        
         //get data from svn list and set to redis
         if ( empty($output) ) {
         
