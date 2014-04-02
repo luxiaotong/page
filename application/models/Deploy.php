@@ -16,7 +16,7 @@ class DeployModel {
     const RSYNC_MODULE_V4 = 'weibov4_wap';
 
     //const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
-    const SVN_PARAM = ' export --force ';
+    const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
     const RSYNC_PARAM = '-avz --port=8875 --delete --include=js/static/ --exclude=js/* --exclude=css/* --exclude=img/* --exclude=test/* ';
 
     //const CHECKOUT_PATH_V3 = '/data1/sinawapcms/code/svn/weibo/svn/';
@@ -51,8 +51,8 @@ class DeployModel {
         /** svn命令组装 */
         $svn_command = "svn " . self::SVN_PARAM . " {$srcaddr}  " . $checkout_path; //force可以覆盖已存在目录
         $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www-data/svn_output 2>&1";
+
         /** 加入命令池，便于统一管理，检测返回值，根据逻辑终止执行相应语句 */
-            var_dump($svn_command);exit;
         $command_pool['svn'] = array('cmd' => $svn_command);
         
         /** rsync命令组装 */
