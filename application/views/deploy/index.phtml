@@ -25,7 +25,7 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-7">
-            <button class="btn btn-md btn-primary " type="button" id="send">部署测试机</button>
+            <button class="btn btn-md btn-primary " type="button" id="send" data-loading-text="deploying">部署测试机</button>
         </div>
     </div>
 </form>
@@ -63,11 +63,12 @@ function is_available_input(event) {
 }
 
 $("button#send").click(function(){
-    
+    $(this).button('loading');  
     //start post data
     $.post('/deploy/send', $("form#deployform").serialize(), function(data){
         if (data.rst == 1) {
-            alert('123');
+            alert('complete');
+            $(this).button('reset');  
         } else if( data.errno ) {
         }
     });

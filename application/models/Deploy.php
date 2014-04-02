@@ -15,15 +15,15 @@ class DeployModel {
     const RSYNC_MODULE_V3 = 'weibo_source';
     const RSYNC_MODULE_V4 = 'weibov4_wap';
 
-    //const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
-    const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
+    const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
+    //const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
     const RSYNC_PARAM = '-avz --port=8875 --delete --include=js/static/ --exclude=js/* --exclude=css/* --exclude=img/* --exclude=test/* ';
 
-    //const CHECKOUT_PATH_V3 = '/data1/sinawapcms/code/svn/weibo/svn/';
-    //const CHECKOUT_PATH_V4 = '/data1/sinawapcms/code/svn/weibo/svn_v4/';
+    const CHECKOUT_PATH_V3 = '/data1/sinawapcms/code/svn/weibo/svn/';
+    const CHECKOUT_PATH_V4 = '/data1/sinawapcms/code/svn/weibo/svn_v4/';
 
-    const CHECKOUT_PATH_V3 = '~www-data/';
-    const CHECKOUT_PATH_V4 = '~www-data/';
+    //const CHECKOUT_PATH_V3 = '~www-data/';
+    //const CHECKOUT_PATH_V4 = '~www-data/';
 
     public function __construct() {
         $config = new Yaf_Config_Ini(APP_PATH . "/conf/deploy.ini", "account");
@@ -50,13 +50,13 @@ class DeployModel {
 
         /** svn命令组装 */
         $svn_command = "svn " . self::SVN_PARAM . " {$srcaddr}  " . $checkout_path; //force可以覆盖已存在目录
-        $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www-data/svn_output 2>&1";
+        $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www/svn_output 2>&1";
 
         /** 加入命令池，便于统一管理，检测返回值，根据逻辑终止执行相应语句 */
         $command_pool['svn'] = array('cmd' => $svn_command);
         
         /** rsync命令组装 */
-        $rsync_command = " rsync " . self::RSYNC_PARAM . " {$checkout_path} {$desaddr}::{$rsync_module} >~www-data/rsync_outout 2>&1";
+        $rsync_command = " rsync " . self::RSYNC_PARAM . " {$checkout_path} {$desaddr}::{$rsync_module} >~www/rsync_outout 2>&1";
         $command_pool['rsync'] = array('cmd' => $rsync_command);
 
         $this->run_command($command_pool);
@@ -114,11 +114,11 @@ class DeployModel {
         //get data from svn list and set to redis
         if ( empty($output) ) {
         
-            $svn_command = "svn list --username {$this->svn_account['user']} --password {$this->svn_account['password']} $search";
+            $svn_command = "svn list --config-dir ~www/.subversion/ --username {$this->svn_account['user']} --password {$this->svn_account['password']} $search";
             $output = shell_exec($svn_command);
             $this->redis_obj->hset('svnaddr', $search, $output);
         }
-        
+
         // splite output and filter
         return $this->splite_relpaths_from_output($output, $search, $filter);
         
