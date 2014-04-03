@@ -30,6 +30,7 @@
     </div>
 </form>
 
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/modal.phtml'); ?>
 <script>
 $("input#srcaddr").keyup(function(event){
     var srcaddr = event.target.value;
@@ -63,13 +64,19 @@ function is_available_input(event) {
 }
 
 $("button#send").click(function(){
+
+    if ( $("#srcaddr").val() == "" ) {
+        mymodal.notice("SVN adress can't be empty", "", "", "300px");
+        return;
+    }
     $(this).button('loading');  
     //start post data
     $.post('/deploy/send', $("form#deployform").serialize(), function(data){
         if (data.rst == 1) {
-            alert('complete');
-            $(this).button('reset');  
+            mymodal.notice("deploy completed", "", "", "300px");
+            $("button#send").button('reset');  
         } else if( data.errno ) {
+            mymodal.notice(data.errmsg, "", "", "300px");
         }
     });
 });
@@ -78,9 +85,6 @@ function set_srcaddr(srcaddr) {
     if ( srcaddr ) {
         $("input#srcaddr").val(srcaddr);
     }
-}
-
-function open_dropdown() {
 }
 </script>
 
