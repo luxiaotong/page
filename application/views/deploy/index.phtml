@@ -30,6 +30,26 @@
     </div>
 </form>
 
+<br><br>
+
+<?php if ( !empty($deploylog) ) : ?>
+<div class="container">
+    <table class="table">
+        <thead><tr><th>Time</th><th>Svn Address</th><th>Rsync Address</th><th>Operator</th></tr></thead>
+        <tbody>
+            <?php foreach ( $deploylog as $key => $log ) : ?>
+            <tr>
+            <td><?=$log['time']?></td>
+            <td><?=$log['srcaddr']?></td>
+            <td><?=$log['desaddr']?></td>
+            <td><?=$log['username']?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php endif; ?>
+
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/modal.phtml'); ?>
 <script>
 $("input#srcaddr").keyup(function(event){
@@ -70,16 +90,23 @@ $("button#send").click(function(){
         return;
     }
     $(this).button('loading');  
+    
     //start post data
     $.post('/deploy/send', $("form#deployform").serialize(), function(data){
         if (data.rst == 1) {
-            mymodal.notice("deploy completed", "", "", "300px");
-            $("button#send").button('reset');  
+            mymodal.refresh("deploy completed", location.href, "", "", "300px");
         } else if( data.errno ) {
             mymodal.notice(data.errmsg, "", "", "300px");
         }
+        $("button#send").button('reset');  
     });
+    
 });
+
+$(document).ajaxError( function() {
+    $("button#send").button('reset');  
+});
+    
 
 function set_srcaddr(srcaddr) {
     if ( srcaddr ) {

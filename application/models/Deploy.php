@@ -16,14 +16,15 @@ class DeployModel {
     const RSYNC_MODULE_V4 = 'weibov4_wap';
 
     const SVN_PARAM = ' export --force --config-dir ~www/.subversion/ ';
-    //const SVN_PARAM = ' export --force --config-dir ~www-data/.subversion/ ';
     const RSYNC_PARAM = '-avz --port=8875 --delete --include=js/static/ --exclude=js/* --exclude=css/* --exclude=img/* --exclude=test/* ';
 
+    const SVN_CHECKOUT_PATH = '/data1/sinawapcms/code/svn/weibo/svn/';
     const CHECKOUT_PATH_V3 = '/data1/sinawapcms/code/svn/weibo/svn/';
     const CHECKOUT_PATH_V4 = '/data1/sinawapcms/code/svn/weibo/svn_v4/';
-
-    //const CHECKOUT_PATH_V3 = '~www-data/';
-    //const CHECKOUT_PATH_V4 = '~www-data/';
+    const CHECKOUT_PATH_V4_STATIC = '/data1/sinawapcms/code/svn/weibo/svn_v4_static/';
+    
+    private $message = array(
+    );
 
     public function __construct() {
         $config = new Yaf_Config_Ini(APP_PATH . "/conf/deploy.ini", "account");
@@ -45,12 +46,25 @@ class DeployModel {
     public function run_deploy($srcaddr, $desaddr) {
 
         
-        $checkout_path = self::CHECKOUT_PATH_V4;
-        $rsync_module = self::RSYNC_MODULE_V4;
+        if ( strpos($srcaddr, self::SVN_PREFIX_V3) !== false ) {
+            $rsync_module = self::RSYNC_MODULE_V4;
+            $checkout_path = self::CHECKOUT_PATH_V3;
+        } elseif ( strpos($srcaddr, self::SVN_PREFIX_V4) !== false ) {
+            $rsync_module = self::RSYNC_MODULE_V4;
+            $checkout_path = self::CHECKOUT_PATH_V4;
+
+            ################新增静态资源主干文件的同步####################
+            $this->BackupPath(self::CHECKOUT_PATH_V4_STATIC); //静态资源目录的备份和创建
+            $svn_static_command = "svn " . SVN_PARAM . ' ' . SVN_STATIC_ADRESS . ' ' . CHECKOUT_PATH_V4_STATIC; //force可以覆盖已存在目录                     $svn_static_command .=" --username {$this->svnAccount['user']} --password {$this->svnAccount['password']} 2>&1";
+            $commandPool['svn_static'] = array('cmd' => $svn_static_command);
+        } else {
+            exit("SVN 检出路径输入错误");
+        }
 
         /** svn命令组装 */
         $svn_command = "svn " . self::SVN_PARAM . " {$srcaddr}  " . $checkout_path; //force可以覆盖已存在目录
         $svn_command .=" --username {$this->svn_account['user']} --password {$this->svn_account['password']} >~www/svn_output 2>&1";
+        $this->BackupPath($checkout_path);
 
         /** 加入命令池，便于统一管理，检测返回值，根据逻辑终止执行相应语句 */
         $command_pool['svn'] = array('cmd' => $svn_command);
@@ -59,15 +73,17 @@ class DeployModel {
         $rsync_command = " rsync " . self::RSYNC_PARAM . " {$checkout_path} {$desaddr}::{$rsync_module} >~www/rsync_outout 2>&1";
         $command_pool['rsync'] = array('cmd' => $rsync_command);
 
-        $this->run_command($command_pool);
-    }
-
-    private function run_command($command_pool) {
-
         if ( !empty($command_pool) ) {
             foreach ( $command_pool as $key => $command ) {
                 $output = shell_exec($command['cmd']);
             }
+            
+            $deploylog = json_encode(array("time" => date("Y-m-d H:i:s"), 
+                "srcaddr" => $srcaddr, 
+                "desaddr" => "{$desaddr}::{$rsync_module}",
+                "username" => ""));
+            $this->redis_obj->lpush("deploylog", $deploylog);
+            $this->redis_obj->ltrim("deploylog", 0, 29);
         }
     }
 
@@ -86,9 +102,9 @@ class DeployModel {
                 $ret = $this->deldir($backdir);
                 if ( !$ret ) throw new Exception($this->message['rmdir']);
             }
-            if ( $this->debug ) {
+            /*if ( $this->debug ) {
                 echo "move the file $localPath to $backdir";
-            }
+            }*/
             $ret = @rename($localPath, $backdir);
             if ( !$ret ) throw new Exception($this->message['movedir']);
             if ( ltrim(self::SVN_CHECKOUT_PATH) == ltrim($localPath) ) {
@@ -99,6 +115,27 @@ class DeployModel {
         }else {
             $ret = mkdir($localPath, 0755, true); //不存在则第一次检出需要建立
             if ( !$ret ) throw new Exception($this->message['mkdir'] . $localPath);
+            return false;
+        }
+    }
+
+    function deldir($dir)
+    {
+        $dh = opendir($dir);
+        while ( $file = readdir($dh) ) {
+            if ( $file != "." && $file != ".." ) {
+                $fullpath = $dir . "/" . $file;
+                if ( !is_dir($fullpath) ) {
+                    unlink($fullpath);
+                } else {
+                    $this->deldir($fullpath); //�ݹ����
+                }
+            }
+        }
+        closedir($dh);
+        if ( rmdir($dir) ) {
+            return true;
+        } else {
             return false;
         }
     }
@@ -137,5 +174,13 @@ class DeployModel {
         } else {
             return array();
         }
+    }
+
+    public function get_deploylog() {
+        $logs = $this->redis_obj->lrange("deploylog", 0, 29);
+        foreach ( $logs as $key => $log ) {
+            $deploylog[] = json_decode($log, true);
+        }
+        return $deploylog;
     }
 }
