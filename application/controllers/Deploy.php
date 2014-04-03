@@ -10,11 +10,13 @@ class DeployController extends Yaf_Controller_Abstract {
             header('Content-Type: application/json; charset=utf-8');
         }
         $this->deploy_obj = new DeployModel();
+        $this->getView()->assign("title", "Deployment");
     }
     
     public function indexAction() {
         $this->getView()->assign("primary_svn", $this->deploy_obj->get_primary_svn());
         $this->getView()->assign("test_mechine", $this->deploy_obj->get_test_mechine());
+        $this->getView()->assign("deploylog", $this->deploy_obj->get_deploylog());
     }
 
     public function sendAction() {

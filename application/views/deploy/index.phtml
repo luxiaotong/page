@@ -25,11 +25,32 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-7">
-            <button class="btn btn-md btn-primary " type="button" id="send">部署测试机</button>
+            <button class="btn btn-md btn-primary " type="button" id="send" data-loading-text="deploying">部署测试机</button>
         </div>
     </div>
 </form>
 
+<br><br>
+
+<?php if ( !empty($deploylog) ) : ?>
+<div class="container">
+    <table class="table">
+        <thead><tr><th>Time</th><th>Svn Address</th><th>Rsync Address</th><th>Operator</th></tr></thead>
+        <tbody>
+            <?php foreach ( $deploylog as $key => $log ) : ?>
+            <tr>
+            <td><?=$log['time']?></td>
+            <td><?=$log['srcaddr']?></td>
+            <td><?=$log['desaddr']?></td>
+            <td><?=$log['username']?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php endif; ?>
+
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/modal.phtml'); ?>
 <script>
 $("input#srcaddr").keyup(function(event){
     var srcaddr = event.target.value;
@@ -63,23 +84,34 @@ function is_available_input(event) {
 }
 
 $("button#send").click(function(){
+
+    if ( $("#srcaddr").val() == "" ) {
+        mymodal.notice("SVN adress can't be empty", "", "", "300px");
+        return;
+    }
+    $(this).button('loading');  
     
     //start post data
     $.post('/deploy/send', $("form#deployform").serialize(), function(data){
         if (data.rst == 1) {
-            alert('123');
+            mymodal.refresh("deploy completed", location.href, "", "", "300px");
         } else if( data.errno ) {
+            mymodal.notice(data.errmsg, "", "", "300px");
         }
+        $("button#send").button('reset');  
     });
+    
 });
+
+$(document).ajaxError( function() {
+    $("button#send").button('reset');  
+});
+    
 
 function set_srcaddr(srcaddr) {
     if ( srcaddr ) {
         $("input#srcaddr").val(srcaddr);
     }
-}
-
-function open_dropdown() {
 }
 </script>
 
