@@ -67,7 +67,7 @@ class Tool_Request{
         $key = $rname . "_" . $type;
         if(!isset($cache[$key])){
             $raw = self::getRaw($rname, $type);
-            $cache[$key] = boolval($raw);
+            $cache[$key] = (bool)$raw;
         }
         return $cache[$key];
     }

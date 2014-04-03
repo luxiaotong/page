@@ -13,12 +13,16 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
                 "page" => "PAGE",
                 "machine" => "测试机管理",
                 "deploy" => "SVN部署",
+                "tool" => "工具",
             ),
             "pageNavs" => array(
                 "index" => "合作方配置",
                 "reset" => "使用配置文件初使化redis",
                 "diff" => "比较与发布",
         //        "resetredis" => "重新填写redis数据",
+            ),
+            "toolNavs" => array(
+                "diff" => "两文件比较",
             ),
         );
         $dispatcher->initView(APP_PATH . "/application/views")->assign($assignParams);

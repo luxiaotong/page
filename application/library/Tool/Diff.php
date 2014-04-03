@@ -32,6 +32,26 @@ class Tool_Diff{
         return $result;
     }
 
+    public static function file($file1, $file2, $sort = true, $options = array()){
+        file_exists($file1) && $old = file_get_contents($file1);
+        if(empty($old)){
+            $old = array();
+        }else {
+            $old = explode("\n", $old);
+        }
+        file_exists($file2) && $new = file_get_contents($file2);
+        if(empty($new)){
+            $new = array();
+        }else{
+            $new = explode("\n", $new);
+        }
+        if($sort){
+            sort($old);
+            sort($new);
+        }
+        return self::render($old, $new, $options);
+    }
+
     /**
      * 比较两个配置数组的不同点
      * 

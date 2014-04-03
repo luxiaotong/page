@@ -210,6 +210,11 @@ class PageController extends Yaf_Controller_Abstract{
      * 如果有数据，将生成diff信息
      */
     public function resetAction(){
+        //是否使用原始的数据做重置，默认是用生成的配置文件做重置，这个将会在最后去掉
+        $useDefaultConfig = Tool_Request::getBool("default");
+        if($useDefaultConfig){
+            $this->pm = new PartnerModel("", APP_PATH . "/conf/page/pageconfig.ini");
+        }
         $this->getView()->assign("title", "使用配置文件初使化redis");
         $pageconfig = $this->pm->getPageconfigRedis();
         //如果是有post数据，或者是redis里没有数据，将直接导入
@@ -255,7 +260,7 @@ class PageController extends Yaf_Controller_Abstract{
         $old = $this->pm->getPageconfigIni();
         $new = $this->pm->getPageconfigRedis();
         $diff_opcode = Tool_Diff::ini(Tool_Func::array2ini($old, "-"), Tool_Func::array2ini($new, "-"), true, array("context" => 5));
-        if(empty($diff_opcode)){
+        if(!Tool_Request::getBool("force") && empty($diff_opcode)){
             Yaf_Dispatcher::getInstance()->disableView();
             $msg = "文件一致，不需要发布";
             $assignParams['box_msg'] = $msg;

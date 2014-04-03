@@ -40,7 +40,7 @@ class PartnerModel{
         if(!empty($ini)){
             $this->pageconfigInifile = $ini;
         }else{
-            $this->pageconfigInifile = APP_PATH . "/conf/page/pageconfig.ini";
+            $this->pageconfigInifile = "/data1/sinawap/resource/rsync/config/ttt_front/v5_conf/pageconfig.ini";
         }
         if(!empty($descini)){
             $this->pageconfigInifile = $descini;
@@ -215,11 +215,59 @@ class PartnerModel{
         }
     }
     public function writeToini($config){
+        //写入v4可以读取的配置文件,v4写入json
+        $v4_config = self::partnermap($config);
+        Tool_Log::writeToFile(json_encode($v4_config), "/data1/sinawap/resource/rsync/config/ttt_front/pageconfig.txt");
+        /*
+        $v4_config = self::partnermap($config);
+        $content = "[product]\n";
+        $v4_config = Tool_Func::array2ini($v4_config);
+        foreach($v4_config as $k => $v){
+            $content .= "$k = \"$v\"\n";
+        }
+        Tool_Log::writeToFile($content, "/data1/sinawap/resource/rsync/config/ttt_front/pageconfig.txt");
+         */
+
+        //写入v5的配置文件
         $content = "[product]\n";
         $config = Tool_Func::array2ini($config);
         foreach($config as $k => $v){
             $content .= "$k = \"$v\"\n";
         }
         return Tool_Log::writeToFile($content, $this->pageconfigInifile);
+    }
+    static function partnermap($ini){
+        static $maps = array(
+            "Data_Product_Page_Weibo::" => "data_product_page_weibo::",
+            "Data_Product_Page_Pub::" => "data_product_page_pub::",
+            "Data_Product_Page_Interest::" => "data_product_page_interest::",
+            "Data_Product_Page_Photo::" => "data_product_page_photo::",
+            "Data_Product_Page_Topic_Event::" => "data_product_page_topicEvent::",
+            "Data_Product_Page_Topic::" => "data_product_page_topic::",
+            "Data_Product_Page_Event::" => "data_product_page_event::",
+            "Data_Product_Page_Group::" => "data_product_page_group::",
+            "Data_Weibo_Recommend::" => "weibo_recommend::",
+            "Data_Product_Page_Ext::" => "data_product_page_ext::",
+            "Data_Product_Page_Friends::" => "data_product_page_friends::",
+            "Data_Product_Page_Profile::" => "data_product_page_profile::",
+            "Data_Product_Page_Review::" => "data_product_page_review::",
+            "Data_Product_Page_Tool::" => "data_product_page_tool::",
+            "Data_Product_Page_Object::" => "data_product_page_object::",
+            "Data_Product_Page_Topict::" => "data_product_page_topicT::",
+            "Data_Product_Page_Topic_Night::" => "data_product_page_topic_night::",
+            "Data_Product_Page_Profile_Cardlist::" => "data_product_page_profile_cardlist::",
+            "Data_Product_Page_Findfriends::" => "data_product_page_findFriends::",
+        );
+        static $search, $replace;
+        empty($search) && $search = array_keys($maps);
+        empty($replace) &&  $replace = array_values($maps);
+        foreach($ini as $k => $each_ini){
+            if(is_string($each_ini)){
+                $ini[$k] = str_replace($search, $replace, $each_ini);
+            }else{
+                $ini[$k] = self::partnermap($each_ini);
+            }
+        }
+        return $ini;
     }
 }
