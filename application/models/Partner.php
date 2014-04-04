@@ -114,6 +114,17 @@ class PartnerModel{
         }
     }
 
+    //获取可以上线的所有配置
+    public function getPublishPageconfig(){
+        $pageconfig = $this->getPageconfigRedis();
+        foreach($pageconfig['partners'] as $partnerid => $c){
+            if(!empty($c['close'])){
+                unset($pageconfig['partners'][$partnerid]);
+            }
+        }
+        return $pageconfig;
+    }
+
 
     /**
      * 获取支持的配置键名

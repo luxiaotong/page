@@ -243,7 +243,7 @@ class PageController extends Yaf_Controller_Abstract{
             $assignParams['box_url'] = '/page/';
         }else{
             //删除操作
-            $t = $this->pm->writeToini($this->pm->getPageconfigRedis());
+            $t = $this->pm->writeToini($this->pm->getPublishPageconfig());
             if($t){
                 $msg = "生成文件成功";
             }else{
@@ -258,7 +258,7 @@ class PageController extends Yaf_Controller_Abstract{
 
     public function diffAction(){
         $old = $this->pm->getPageconfigIni();
-        $new = $this->pm->getPageconfigRedis();
+        $new = $this->pm->getPublishPageconfig();
         $diff_opcode = Tool_Diff::ini(Tool_Func::array2ini($old, "-"), Tool_Func::array2ini($new, "-"), true, array("context" => 5));
         if(!Tool_Request::getBool("force") && empty($diff_opcode)){
             Yaf_Dispatcher::getInstance()->disableView();

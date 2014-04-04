@@ -23,11 +23,12 @@ var page = {
         template = $(heredoc(function(){/*
                <div class="form-group">
                    <label class="col-sm-2 control-label"></label>
-                   <div class="col-sm-10">
+                   <div class="col-sm-9">
                        <input type="text" class="form-control">
                        <span class="help-block">
                        </span>
                    </div>
+                   <div class="col-sm-1 control-label"><button type="button" class="close" onclick="javascript:$(this).parents('.form-group').remove()">×</button></div>
                </div>
         */}));
         name = page.get_name(field);
