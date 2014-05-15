@@ -7,6 +7,11 @@
  *     */
 class Bootstrap extends Yaf_Bootstrap_Abstract{
 
+    public function _initPlugin($dispatcher){
+        $dispatcher->registerPlugin(new LoginPlugin());
+        $dispatcher->registerPlugin(new AssignPlugin());
+    }
+
     public function _initConfig($dispatcher) {
         $assignParams = array(
             "navs" => array(
@@ -26,10 +31,8 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
                 "jsondiff" => "两个json比较",
             ),
         );
-        $dispatcher->initView(APP_PATH . "/application/views")->assign($assignParams);
-    }
-
-    public function _initPlugin($dispatcher){
-        $dispatcher->registerPlugin(new AssignPlugin());
+        $view = $dispatcher->initView(APP_PATH . "/application/views");
+	$view->assign($assignParams);
+	$view->assign('title', '微博后台');
     }
 }
