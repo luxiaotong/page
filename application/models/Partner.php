@@ -118,7 +118,7 @@ class PartnerModel{
     public function getPublishPageconfig(){
         $pageconfig = $this->getPageconfigRedis();
         foreach($pageconfig['partners'] as $partnerid => $c){
-            if(!empty($c['close'])){
+            if(!empty($c['offline'])){
                 unset($pageconfig['partners'][$partnerid]);
             }
         }
@@ -172,7 +172,7 @@ class PartnerModel{
                 continue;
             }
             foreach($v as $kk => $vv){
-                $this->redis->hset($k, $kk, json_encode($vv));
+               $r =  $this->redis->hset($k, $kk, json_encode($vv));
             }
         }
     }
@@ -189,7 +189,7 @@ class PartnerModel{
      */
     public function getPageconfigIni($name = '', $subkey = NULL){
         if(empty($this->pageconfigFromIni)){
-            $c = new Yaf_Config_Ini($this->pageconfigInifile, 'product');
+            $c = new Yaf_Config_Ini($this->pageconfigInifile);
             $this->pageconfigFromIni = $c->toArray();
         }
         if(empty($name))
@@ -240,7 +240,7 @@ class PartnerModel{
          */
 
         //写入v5的配置文件
-        $content = "[product]\n";
+        $content = "";
         $config = Tool_Func::array2ini($config);
         foreach($config as $k => $v){
             $content .= "$k = \"$v\"\n";
@@ -268,6 +268,11 @@ class PartnerModel{
             "Data_Product_Page_Topic_Night::" => "data_product_page_topic_night::",
             "Data_Product_Page_Profile_Cardlist::" => "data_product_page_profile_cardlist::",
             "Data_Product_Page_Findfriends::" => "data_product_page_findFriends::",
+            "Data_Product_Page_AdVideo::" => "data_product_page_adVideo::",
+            "Data_Product_Page_Vote::" => "data_product_page_vote::",
+            "Data_Product_Page_Like::" => "data_product_page_like::",
+            "Data_Product_Page_Favorites::" => "data_product_page_favorites::",
+            "Page_Tool_String::replace" => "data_product_page_tool::strReplace",
         );
         static $search, $replace;
         empty($search) && $search = array_keys($maps);

@@ -23,6 +23,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
             ),
             "toolNavs" => array(
                 "diff" => "两文件比较",
+                "jsondiff" => "两个json比较",
             ),
         );
         $dispatcher->initView(APP_PATH . "/application/views")->assign($assignParams);

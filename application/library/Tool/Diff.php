@@ -32,6 +32,12 @@ class Tool_Diff{
         return $result;
     }
 
+    public static function arr($a1, $a2, $sort = true, $options = array()){
+        $old = Tool_Func::array2ini($a1);
+        $new = Tool_Func::array2ini($a2);
+        return self::ini($old, $new, $sort, $options);
+    }
+
     public static function file($file1, $file2, $sort = true, $options = array()){
         file_exists($file1) && $old = file_get_contents($file1);
         if(empty($old)){
@@ -62,6 +68,8 @@ class Tool_Diff{
      * @return array diff_opcode
      */
     public static function ini($old, $new, $sort = true, $options = array()){
+        empty($old) && $old = array();
+        empty($new) && $new = array();
         if($sort){
             ksort($old);
             ksort($new);
