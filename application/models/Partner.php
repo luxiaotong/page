@@ -189,8 +189,12 @@ class PartnerModel{
      */
     public function getPageconfigIni($name = '', $subkey = NULL){
         if(empty($this->pageconfigFromIni)){
-            $c = new Yaf_Config_Ini($this->pageconfigInifile);
-            $this->pageconfigFromIni = $c->toArray();
+            if(file_exists($this->pageconfigInifile)){
+                $c = new Yaf_Config_Ini($this->pageconfigInifile);
+                $this->pageconfigFromIni = $c->toArray();
+            }else{
+                $this->pageconfigFromIni = array();
+            }
         }
         if(empty($name))
             return $this->pageconfigFromIni;

@@ -11,7 +11,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
         $assignParams = array(
             "navs" => array(
                 "page" => "PAGE",
-                "machine" => "测试机管理",
+//                "machine" => "测试机管理",
                 "deploy" => "SVN部署",
                 "tool" => "工具",
             ),
