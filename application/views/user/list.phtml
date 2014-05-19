@@ -1,0 +1,51 @@
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/header.phtml'); ?>
+
+<div class="container">
+
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">用户管理</h3>
+	  </div>
+	  <div class="panel-body">
+	  	<a href="/user/addition">新建用户</a> 
+	  </div>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th></th>
+					<th>ID</th>
+					<th>用户名</th>
+					<th>用户昵称</th>
+					<th>用户角色</th>
+					<th>时间</th>
+					<th class="col-md-1">操作</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<?php foreach ( $user_list as $key => $user ) : ?>
+				<tr>
+					<td></td>
+					<td><?=$user['id']?></td>
+					<td><?=$user['username']?></td>
+					<td><?=$user['nick']?></td>
+					<td></td>
+					<td></td>
+					<td class="col-md-2">
+						<button id="edit" type="button" class="btn btn-primary btn-sm">编辑</button>&nbsp;&nbsp;
+						<button id="delete" type="button" class="btn btn-danger btn-sm">删除</button>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+
+			<tfoot>
+			  
+			</tfoot>
+		</table>
+	</div>
+</div>
+
+
+<?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>

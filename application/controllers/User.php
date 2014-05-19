@@ -9,7 +9,8 @@ class UserController extends Yaf_Controller_Abstract {
             Yaf_Dispatcher::getInstance()->disableView();
             header('Content-Type: application/json; charset=utf-8');
         }
-        //$this->deploy_obj = new AdminModel();
+	$uid = User::get_login_uid();
+        $this->admin_obj = new AdminModel($uid);
     }
 
 	public function loginAction() {
@@ -32,6 +33,28 @@ class UserController extends Yaf_Controller_Abstract {
 		User::set_login_uid(null);
 		Yaf_Session::getInstance()->del('user');
 		header("location: /user/login");
+	}
+
+	public function listAction() {
+
+		$page = Tool_Request::getInt('page', 'get');
+		$count = Tool_Request::getInt('count', 'get');
+		$page = empty($page) ? 1 : $page;
+		$count = empty($count) ? 10 : $count;
+		$user_list = $this->admin_obj->get_user_list($page, $count);
+		$this->getView()->assign('user_list', $user_list);
+	}
+
+	public function additionAction() {
+
+		
+	}
+
+	public function addAction() {
+
+		$username = Tool_Request::getStr('username', 'post');
+		$nick = Tool_Request::getStr('nick', 'post');
+		$this->admin_obj->add_user($username, $nick);
 	}
 
 }
