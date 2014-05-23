@@ -3,6 +3,7 @@
 class User {
 
 	private static $uid;
+	private static $user = array();
 
 	private function __Construct() {
 
@@ -17,5 +18,16 @@ class User {
 
 		self::$uid = $uid;
 		return;
+	}
+	
+	public static function set_user($user) {
+
+		self::$user = $user;
+		return;
+	}
+	
+	public static function get_username() {
+
+		return self::$user['username'];
 	}
 }

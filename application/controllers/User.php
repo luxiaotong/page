@@ -55,6 +55,33 @@ class UserController extends Yaf_Controller_Abstract {
 		$username = Tool_Request::getStr('username', 'post');
 		$nick = Tool_Request::getStr('nick', 'post');
 		$this->admin_obj->add_user($username, $nick);
+		$rst = array('rst' => 1);
+		die( json_encode($rst) );
+	}
+
+	public function removeAction() {
+
+		$id = Tool_Request::getInt('id', 'post');
+		$this->admin_obj->remove_user($id);
+		$rst = array('rst' => 1);
+		die( json_encode($rst) );
+	}
+
+	public function modificationAction() {
+
+		$id = Tool_Request::getInt('id', 'get');
+		$user_data = $this->admin_obj->get_user($id);
+		$this->getView()->assign("user", $user_data);
+	}
+	
+	public function modifyAction() {
+
+		$id = Tool_Request::getInt('id', 'post');
+		$username = Tool_Request::getStr('username', 'post');
+		$nick = Tool_Request::getStr('nick', 'post');
+		$this->admin_obj->modify_user($id, $username, $nick);
+		$rst = array('rst' => 1);
+		die( json_encode($rst) );
 	}
 
 }

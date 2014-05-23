@@ -40,4 +40,9 @@ class DB_Mysql {
 		
 		return mysql_real_escape_string($str, $this->link);
 	}
+
+	public function run_sql($sql) {
+
+		return mysql_query($sql, $this->link);
+	}
 }

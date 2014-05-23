@@ -33,8 +33,8 @@
 					<td></td>
 					<td></td>
 					<td class="col-md-2">
-						<button id="edit" type="button" class="btn btn-primary btn-sm">编辑</button>&nbsp;&nbsp;
-						<button id="delete" type="button" class="btn btn-danger btn-sm">删除</button>
+						<a class="btn btn-primary btn-sm" href="/user/modification?id=<?=$user['id']?>">编辑</a>&nbsp;&nbsp;
+						<button id="delete" type="button" class="btn btn-danger btn-sm" user_id=<?=$user['id']?>>删除</button>
 					</td>
 				</tr>
 				<?php endforeach; ?>
@@ -47,5 +47,23 @@
 	</div>
 </div>
 
+<script>
+
+$("button#delete").click(function(){
+
+    id = $(this).attr("user_id");
+    //start post data
+    $.post('/user/remove', {id : id}, function(data){
+        if (data.rst == 1) {
+		location.href="/user/list";
+            //mymodal.refresh("deploy completed", location.href, "", "", "300px");
+        } else if( data.errno ) {
+            //mymodal.notice(data.errmsg, "", "", "300px");
+		alert(data.errmsg);
+        }
+    });
+    
+});
+</script>
 
 <?php Yaf_Loader::import(dirname(__FILE__) . '/../include/footer.phtml'); ?>

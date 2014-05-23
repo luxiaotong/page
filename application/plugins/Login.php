@@ -21,6 +21,7 @@ class LoginPlugin extends Yaf_Plugin_Abstract {
 					//success
 					Yaf_Session::getInstance()->set('user', $user_data);
 					User::set_login_uid($user_data['id']);
+					User::set_user($user_data);
 				}
 				 /*else {
 					//identify from remote ldap
@@ -40,6 +41,7 @@ class LoginPlugin extends Yaf_Plugin_Abstract {
 			}
 		} else {
 			
+			User::set_user($user);
         		$view = Yaf_Dispatcher::getInstance()->initView(APP_PATH . "/application/view");
 			$view->assign('user', $user);
 		}
