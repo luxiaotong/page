@@ -18,18 +18,12 @@ class LoginPlugin extends Yaf_Plugin_Abstract {
 				if ( empty($user_data) ) {
 					return false;
 				} else {
-					//success
-					Yaf_Session::getInstance()->set('user', $user_data);
-					User::set_login_uid($user_data['id']);
-					User::set_user($user_data);
-				}
-				 /*else {
 					//identify from remote ldap
-					$ldap = ldap_connect('10.210.97.21');
+					$ldap = @ldap_connect('10.210.97.21');
 					if ( !is_resource($ldap) ) {
 						return false;
 					}
-					$result = ldap_bind($ldap, $user_data['username']."@staff.sina.com.cn", $password);
+					$result = @ldap_bind($ldap, $user_data['username']."@staff.sina.com.cn", $password);
 				}
 				if ( !$result ) {
 					return false;
@@ -37,10 +31,12 @@ class LoginPlugin extends Yaf_Plugin_Abstract {
 					//success
 					Yaf_Session::getInstance()->set('user', $user_data);
 					User::set_login_uid($user_data['id']);
-				}*/
+					User::set_user($user_data);
+				}
 			}
 		} else {
 			
+			User::set_login_uid($user['id']);
 			User::set_user($user);
         		$view = Yaf_Dispatcher::getInstance()->initView(APP_PATH . "/application/view");
 			$view->assign('user', $user);
